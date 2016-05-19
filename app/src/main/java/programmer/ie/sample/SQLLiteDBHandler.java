@@ -47,6 +47,23 @@ public class SQLLiteDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public Product getProduct(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM " +  TABLE_PRODUCTS + " WHERE _id=?";
+        Cursor c = db.rawQuery(selectQuery, new String[] { String.valueOf(id) });
+        Product result = null;
+        if (c.moveToFirst()) {
+            int pid  = c.getInt(0);
+            String name = c.getString(1);
+            int quantity = c.getInt(2);
+            result = new Product(pid, name, quantity);
+        }
+        c.close();
+        db.close();
+        return result;
+    }
+
+
     public boolean deleteProduct(String productName) {
         boolean result = false;
         String query = "Select * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCT_NAME + " =  \"" + productName + "\"";
