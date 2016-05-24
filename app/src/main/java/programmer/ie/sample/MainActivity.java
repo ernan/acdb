@@ -1,9 +1,7 @@
 package programmer.ie.sample;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,9 +14,8 @@ import android.widget.ListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
+import programmer.ie.acdb.ByteArrayUtil;
 import programmer.ie.acdb.Cdb;
 import programmer.ie.acdb.CdbMake;
 
@@ -68,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
                     make.start(filepath);
                     for (int i = 0; i < itemCount; ++i) {
                         Product product = new Product(i, "Product " + i, i);
-                        make.add(Util.toByteArray(product.getID()), Util.toByteArray(product));
+                        make.add(ByteArrayUtil.toByteArray(product.getID()), ByteArrayUtil.toByteArray(product));
                     }
                     make.finish();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 start = System.currentTimeMillis();
-                list.add("" + + (start - begin) + "(ms)\t\t" + "saved " + itemCount + " products to cdb");
+                list.add("" + +(start - begin) + "(ms)\t\t" + "saved " + itemCount + " products to cdb");
                 begin = start;
 
                 for (int i = 0; i < itemCount; ++i) {
@@ -88,32 +85,32 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Cdb db = new Cdb(filepath);
                     for (int i = 0; i < itemCount; ++i) {
-                        Product product = Util.unmarshall(db.find(Util.toByteArray(i)), Product.CREATOR);
+                        Product product = ByteArrayUtil.unmarshall(db.find(ByteArrayUtil.toByteArray(i)), Product.CREATOR);
                         Log.i("Product: ", product.toString());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 start = System.currentTimeMillis();
-                list.add("" + + (start - begin) + "(ms)\t\t" + "got " + itemCount + " products from cdb");
+                list.add("" + +(start - begin) + "(ms)\t\t" + "got " + itemCount + " products from cdb");
                 begin = start;
 
                 ArrayList<byte[]> ints = new ArrayList<>();
                 for (int i = 0; i < itemCount; ++i) {
-                    ints.add(Util.toByteArray(i));
+                    ints.add(ByteArrayUtil.toByteArray(i));
                 }
                 try {
                     Cdb db = new Cdb(filepath);
 
                     start = System.currentTimeMillis();
-                    list.add("" + + (start - begin) + "(ms)\t\t" + "Stating optimised");
+                    list.add("" + +(start - begin) + "(ms)\t\t" + "Stating optimised");
                     begin = start;
 
-                    for (byte[] b: ints) {
+                    for (byte[] b : ints) {
                         byte[] c = db.find(b);
                     }
                     start = System.currentTimeMillis();
-                    list.add("" + + (start - begin) + "(ms)\t\t" + "finished optimised");
+                    list.add("" + +(start - begin) + "(ms)\t\t" + "finished optimised");
                     begin = start;
 
                 } catch (IOException e) {

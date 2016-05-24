@@ -4,39 +4,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Product implements Parcelable {
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
     int id;
     String productName;
     int quantity;
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", productName='" + productName + '\'' +
-                ", quantity=" + quantity +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Product product = (Product) o;
-
-        if (id != product.id) return false;
-        if (getQuantity() != product.getQuantity()) return false;
-        return getProductName().equals(product.getProductName());
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + getProductName().hashCode();
-        result = 31 * result + getQuantity();
-        return result;
-    }
 
     public Product(int id, String productName, int quantity) {
 
@@ -50,18 +31,6 @@ public class Product implements Parcelable {
         productName = in.readString();
         quantity = in.readInt();
     }
-
-    public static final Creator<Product> CREATOR = new Creator<Product>() {
-        @Override
-        public Product createFromParcel(Parcel in) {
-            return new Product(in);
-        }
-
-        @Override
-        public Product[] newArray(int size) {
-            return new Product[size];
-        }
-    };
 
     public int getID() {
         return id;
@@ -101,4 +70,33 @@ public class Product implements Parcelable {
         dest.writeInt(quantity);
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", productName='" + productName + '\'' +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        if (id != product.id) return false;
+        if (getQuantity() != product.getQuantity()) return false;
+        return getProductName().equals(product.getProductName());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + getProductName().hashCode();
+        result = 31 * result + getQuantity();
+        return result;
+    }
 }

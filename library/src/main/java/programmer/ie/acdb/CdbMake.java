@@ -121,7 +121,7 @@ public final class CdbMake {
      */
     public static void make(InputStream in, String cdbFilepath,
                             String tempFilepath, Cdb ignoreCdb) throws IOException {
-		/* Create the CdbMake object. */
+        /* Create the CdbMake object. */
         CdbMake cdbMake = new CdbMake();
 
 		/* Create the CDB file. */

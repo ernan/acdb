@@ -49,11 +49,11 @@ public class SQLLiteDBHandler extends SQLiteOpenHelper {
 
     public Product getProduct(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String selectQuery = "SELECT * FROM " +  TABLE_PRODUCTS + " WHERE _id=?";
-        Cursor c = db.rawQuery(selectQuery, new String[] { String.valueOf(id) });
+        String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE _id=?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
         Product result = null;
         if (c.moveToFirst()) {
-            int pid  = c.getInt(0);
+            int pid = c.getInt(0);
             String name = c.getString(1);
             int quantity = c.getInt(2);
             result = new Product(pid, name, quantity);

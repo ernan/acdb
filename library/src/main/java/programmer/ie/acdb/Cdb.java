@@ -69,7 +69,7 @@ public class Cdb {
         file_ = new RandomAccessFile(filepath, "r");
 
 		/* Read and parse the slot table.  We do not throw an exception
-		 * if this fails; the file might empty, which is not an error. */
+         * if this fails; the file might empty, which is not an error. */
         try {
 			/* Read the table. */
             byte[] table = new byte[2048];
