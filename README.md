@@ -1,8 +1,6 @@
 # acdb
 ======
 
-[![Initialization](https://badges.gitter.im/Netflix/EVCache.svg)](https://gitter.im/Netflix/EVCache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 An android implementation of CDB database
 
 This is an implementation of [CDB] (https://cr.yp.to/cdb.html)
@@ -34,26 +32,80 @@ All these were run on and android studio vm.
 | Select 500 objects  | 1498 ms   | 116 ms |
 | Optimised Select    |           |  52 ms |
 
-![Example application results](sc.png "Test acdb App results")
+![Example application results](/sc.png "Test acdb App results")
 
 
 ## Initialization
 
 To create a new database we select a file and use CDBMake to create the database
 
+#### Create a  database
 
-<code>
-                CdbMake make = new CdbMake();
-                try {
-                    make.start(filepath);
-                    for (int i = 0; i < itemCount; ++i) {
-                        Product product = new Product(i, "Product " + i, i);
-                        make.add(ByteArrayUtil.toByteArray(product.getID()), ByteArrayUtil.toByteArray(product));
-                    }
-                    make.finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    CdbMake make = new CdbMake();
+    try {
+        make.start(filepath);
+        for (int i = 0; i < itemCount; ++i) {
+            Product product = new Product(i, "Product " + i, i);
+            make.add(ByteArrayUtil.toByteArray(product.getID()), ByteArrayUtil.toByteArray(product));
+        }
+        make.finish();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-</code>
+
+#### Inserting objects
+
+The database is simply a key value store with bye arrays for keys and values.
+So no matter what you are storing in it you will be creating the keys as arrays and  the values as arrays.
+
+There is a util class included for handeling some of the conversions.
+
+For android you may store Parcel objects here is an example
+
+#### convert the parcel to and from a byte array
+
+    public static byte[] toByteArray(Parcelable parceable) {
+        Parcel parcel = Parcel.obtain();
+        parceable.writeToParcel(parcel, 0);
+        byte[] bytes = parcel.marshall();
+        parcel.recycle();
+        return bytes;
+    }
+
+    public static Parcel unmarshall(byte[] bytes) {
+        Parcel parcel = Parcel.obtain();
+        parcel.unmarshall(bytes, 0, bytes.length);
+        parcel.setDataPosition(0);
+        return parcel;
+    }
+
+    public static <T> T unmarshall(byte[] bytes, Parcelable.Creator<T> creator) {
+        Parcel parcel = unmarshall(bytes);
+        return creator.createFromParcel(parcel);
+    }
+
+    public static final byte[] toByteArray(int value) {
+        return new byte[]{
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) value};
+    }
+
+#### insert the parcel
+	
+	Product product = new Product(i, "Product " + i, i);
+    make.add(ByteArrayUtil.toByteArray(product.getID()), ByteArrayUtil.toByteArray(product));
+
+#### Unmarshal the parcel
+
+   Product product = ByteArrayUtil.unmarshall(db.find(ByteArrayUtil.toByteArray(i)), Product.CREATOR);
+
+
+
+
+
+
+
 
