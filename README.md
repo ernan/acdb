@@ -101,6 +101,8 @@ For android you may store Parcel objects here is an example
 #### Unmarshal the parcel
 
    Product product = ByteArrayUtil.unmarshall(db.find(ByteArrayUtil.toByteArray(i)), Product.CREATOR);
+   
+   
 
 
 
