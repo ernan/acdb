@@ -1,8 +1,8 @@
 package programmer.ie.acdb;
 
 public final class CdbElement {
-    private byte[] key_ = null;
-    private byte[] data_ = null;
+    private byte[] key;
+    private byte[] data;
 
 
     /**
@@ -13,15 +13,15 @@ public final class CdbElement {
      * @param data The data value for this element.
      */
     public CdbElement(byte[] key, byte[] data) {
-        key_ = key;
-        data_ = data;
+        this.key = key;
+        this.data = data;
     }
 
     public final byte[] getKey() {
-        return key_;
+        return key;
     }
 
     public final byte[] getData() {
-        return data_;
+        return data;
     }
 }

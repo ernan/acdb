@@ -50,7 +50,7 @@ public class ByteArrayUtil {
         return creator.createFromParcel(parcel);
     }
 
-    public static final byte[] toByteArray(int value) {
+    public static byte[] toByteArray(int value) {
         return new byte[]{
                 (byte) (value >>> 24),
                 (byte) (value >>> 16),
@@ -58,7 +58,7 @@ public class ByteArrayUtil {
                 (byte) value};
     }
 
-    public static final byte[] toByteArray(String value) {
+    public static byte[] toByteArray(String value) {
         return value.getBytes();
     }
 

@@ -18,14 +18,14 @@ public class Cdb {
     /**
      * The RandomAccessFile for the CDB file.
      */
-    private RandomAccessFile file_ = null;
+    private RandomAccessFile file_;
 
     /**
      * The slot pointers, cached here for efficiency as we do not have
      * mmap() to do it for us.  These entries are paired as (pos, len)
      * tuples.
      */
-    private int[] slotTable_ = null;
+    private int[] slotTable_;
 
 
     /**
@@ -68,14 +68,14 @@ public class Cdb {
         /* Open the CDB file. */
         file_ = new RandomAccessFile(filepath, "r");
 
-		/* Read and parse the slot table.  We do not throw an exception
+        /* Read and parse the slot table.  We do not throw an exception
          * if this fails; the file might empty, which is not an error. */
         try {
-			/* Read the table. */
+            /* Read the table. */
             byte[] table = new byte[2048];
             file_.readFully(table);
 
-			/* Create and parse the table. */
+            /* Create and parse the table. */
             slotTable_ = new int[256 * 2];
 
             int offset = 0;
@@ -104,24 +104,24 @@ public class Cdb {
      * @param key The key to compute the hash value for.
      * @return The hash value of <code>key</code>.
      */
-    static final int hash(byte[] key) {
-		/* Initialize the hash value. */
+    static int hash(byte[] key) {
+        /* Initialize the hash value. */
         long h = 5381;
 
-		/* Add each byte to the hash value. */
-        for (int i = 0; i < key.length; i++) {
+        /* Add each byte to the hash value. */
+        for (byte b : key) {
 //			h = ((h << 5) + h) ^ key[i];
             long l = h << 5;
             h += (l & 0x00000000ffffffffL);
             h = (h & 0x00000000ffffffffL);
 
-            int k = key[i];
+            int k = b;
             k = (k + 0x100) & 0xff;
 
             h = h ^ k;
         }
 
-		/* Return the hash value. */
+        /* Return the hash value. */
         return (int) (h & 0x00000000ffffffffL);
     }
 
@@ -137,23 +137,23 @@ public class Cdb {
      */
     public static Enumeration elements(final String filepath)
             throws IOException {
-		/* Open the data file. */
+        /* Open the data file. */
         final InputStream in
                 = new BufferedInputStream(
                 new FileInputStream(
                         filepath)
         );
 
-		/* Read the end-of-data value. */
+        /* Read the end-of-data value. */
         final int eod = (in.read() & 0xff)
                 | ((in.read() & 0xff) << 8)
                 | ((in.read() & 0xff) << 16)
                 | ((in.read() & 0xff) << 24);
 
-		/* Skip the rest of the hashtable. */
+        /* Skip the rest of the hashtable. */
         in.skip(2048 - 4);
 
-		/* Return the Enumeration. */
+        /* Return the Enumeration. */
         return new Enumeration() {
             /* Current data pointer. */
             int pos = 2048;
@@ -177,13 +177,13 @@ public class Cdb {
             /* Returns the next data element in the CDB file. */
             public synchronized Object nextElement() {
                 try {
-					/* Read the key and value lengths. */
+                    /* Read the key and value lengths. */
                     int klen = readLeInt();
                     pos += 4;
                     int dlen = readLeInt();
                     pos += 4;
 
-					/* Read the key. */
+                    /* Read the key. */
                     byte[] key = new byte[klen];
                     for (int off = 0; off < klen; /* below */) {
                         int count = in.read(key, off, klen - off);
@@ -194,7 +194,7 @@ public class Cdb {
                     }
                     pos += klen;
 
-					/* Read the data. */
+                    /* Read the data. */
                     byte[] data = new byte[dlen];
                     for (int off = 0; off < dlen; /* below */) {
                         int count = in.read(data, off, dlen - off);
@@ -205,7 +205,7 @@ public class Cdb {
                     }
                     pos += dlen;
 
-					/* Return a CdbElement with the key and data. */
+                    /* Return a CdbElement with the key and data. */
                     return new CdbElement(key, data);
                 } catch (IOException ioException) {
                     throw new IllegalArgumentException(
@@ -227,7 +227,7 @@ public class Cdb {
      * Closes the CDB database.
      */
     public final void close() {
-		/* Close the CDB file. */
+        /* Close the CDB file. */
         try {
             file_.close();
             file_ = null;
@@ -264,36 +264,36 @@ public class Cdb {
      * <code>null</code> if no record with that key could be found.
      */
     public final synchronized byte[] findnext(byte[] key) {
-		/* There are no keys if we could not read the slot table. */
+        /* There are no keys if we could not read the slot table. */
         if (slotTable_ == null)
             return null;
 
-		/* Locate the hash entry if we have not yet done so. */
+        /* Locate the hash entry if we have not yet done so. */
         if (loop_ == 0) {
-			/* Get the hash value for the key. */
+            /* Get the hash value for the key. */
             int u = hash(key);
 
-			/* Unpack the information for this record. */
+            /* Unpack the information for this record. */
             int slot = u & 255;
             hslots_ = slotTable_[(slot << 1) + 1];
             if (hslots_ == 0)
                 return null;
             hpos_ = slotTable_[slot << 1];
 
-			/* Store the hash value. */
+            /* Store the hash value. */
             khash_ = u;
 
-			/* Locate the slot containing this key. */
+            /* Locate the slot containing this key. */
             u >>>= 8;
             u %= hslots_;
             u <<= 3;
             kpos_ = hpos_ + u;
         }
 
-		/* Search all of the hash slots for this key. */
+        /* Search all of the hash slots for this key. */
         try {
             while (loop_ < hslots_) {
-				/* Read the entry for this key from the hash slot. */
+                /* Read the entry for this key from the hash slot. */
                 file_.seek(kpos_);
 
                 int h = file_.readUnsignedByte()
@@ -308,21 +308,21 @@ public class Cdb {
                 if (pos == 0)
                     return null;
 
-				/* Advance the loop count and key position.  Wrap the
-				 * key position around to the beginning of the hash slot
-				 * if we are at the end of the table. */
+                /* Advance the loop count and key position.  Wrap the
+                 * key position around to the beginning of the hash slot
+                 * if we are at the end of the table. */
                 loop_ += 1;
 
                 kpos_ += 8;
                 if (kpos_ == (hpos_ + (hslots_ << 3)))
                     kpos_ = hpos_;
 
-				/* Ignore this entry if the hash values do not match. */
+                /* Ignore this entry if the hash values do not match. */
                 if (h != khash_)
                     continue;
 
-				/* Get the length of the key and data in this hash slot
-				 * entry. */
+                /* Get the length of the key and data in this hash slot
+                 * entry. */
                 file_.seek(pos);
 
                 int klen = file_.readUnsignedByte()
@@ -337,8 +337,8 @@ public class Cdb {
                         | (file_.readUnsignedByte() << 16)
                         | (file_.readUnsignedByte() << 24);
 
-				/* Read the key stored in this entry and compare it to
-				 * the key we were given. */
+                /* Read the key stored in this entry and compare it to
+                 * the key we were given. */
                 boolean match = true;
                 byte[] k = new byte[klen];
                 file_.readFully(k);
@@ -349,11 +349,11 @@ public class Cdb {
                     }
                 }
 
-				/* No match; check the next slot. */
+                /* No match; check the next slot. */
                 if (!match)
                     continue;
 
-				/* The keys match, return the data. */
+                /* The keys match, return the data. */
                 byte[] d = new byte[dlen];
                 file_.readFully(d);
                 return d;
@@ -362,23 +362,23 @@ public class Cdb {
             return null;
         }
 
-		/* No more data values for this key. */
+        /* No more data values for this key. */
         return null;
     }
 
     public void dump(String cdbFile) {
-		/* Dump the CDB file. */
+        /* Dump the CDB file. */
         try {
             Enumeration e = Cdb.elements(cdbFile);
             while (e.hasMoreElements()) {
-				/* Get the element and its component parts. */
+                /* Get the element and its component parts. */
                 CdbElement element = (CdbElement) e.nextElement();
                 byte[] key = element.getKey();
                 byte[] data = element.getData();
 
-				/* Write the line directly to stdout to avoid any
-				 * charset conversion that System.print() might want to
-				 * perform. */
+                /* Write the line directly to stdout to avoid any
+                 * charset conversion that System.print() might want to
+                 * perform. */
                 System.out.write(
                         ("+" + key.length + "," + data.length + ":").getBytes());
                 System.out.write(key);
@@ -395,11 +395,11 @@ public class Cdb {
     }
 
     public byte[] get(String file, byte[] key, int skip) throws Exception {
-        		/* Parse the arguments. */
-		/* Create the CDB object. */
+        /* Parse the arguments. */
+        /* Create the CDB object. */
         Cdb cdb = new Cdb(file);
         cdb.findstart(key);
-		/* Fetch the data. */
+        /* Fetch the data. */
         byte[] data;
         do {
             data = cdb.findnext(key);
@@ -419,7 +419,7 @@ public class Cdb {
 //            }
 //        }
 
-		/* Create the CDB file. */
+        /* Create the CDB file. */
         try {
             CdbMake.make(System.in, cdbFile, tempFile, ignoreCdb);
         } catch (IOException ioException) {
