@@ -38,7 +38,6 @@ public class Product implements Parcelable {
 
     public void setID(int id) {
         this.id = id;
-
     }
 
     public String getProductName() {
@@ -56,7 +55,6 @@ public class Product implements Parcelable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
 
     @Override
     public int describeContents() {
@@ -89,7 +87,6 @@ public class Product implements Parcelable {
         if (id != product.id) return false;
         if (getQuantity() != product.getQuantity()) return false;
         return getProductName().equals(product.getProductName());
-
     }
 
     @Override

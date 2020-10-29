@@ -135,7 +135,7 @@ public class Cdb {
      * @throws java.io.IOException if an error occurs reading the
      *                             constant database.
      */
-    public static Enumeration elements(final String filepath)
+    public static Enumeration<CdbElement> elements(final String filepath)
             throws IOException {
         /* Open the data file. */
         final InputStream in
@@ -154,7 +154,7 @@ public class Cdb {
         in.skip(2048 - 4);
 
         /* Return the Enumeration. */
-        return new Enumeration() {
+        return new Enumeration<CdbElement>() {
             /* Current data pointer. */
             int pos = 2048;
 
@@ -175,7 +175,7 @@ public class Cdb {
             }
 
             /* Returns the next data element in the CDB file. */
-            public synchronized Object nextElement() {
+            public synchronized CdbElement nextElement() {
                 try {
                     /* Read the key and value lengths. */
                     int klen = readLeInt();
@@ -369,10 +369,10 @@ public class Cdb {
     public void dump(String cdbFile) {
         /* Dump the CDB file. */
         try {
-            Enumeration e = Cdb.elements(cdbFile);
+            Enumeration<CdbElement> e = Cdb.elements(cdbFile);
             while (e.hasMoreElements()) {
                 /* Get the element and its component parts. */
-                CdbElement element = (CdbElement) e.nextElement();
+                CdbElement element = e.nextElement();
                 byte[] key = element.getKey();
                 byte[] data = element.getData();
 

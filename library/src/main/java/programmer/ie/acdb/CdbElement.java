@@ -1,8 +1,8 @@
 package programmer.ie.acdb;
 
 public final class CdbElement {
-    private byte[] key;
-    private byte[] data;
+    private final byte[] key;
+    private final byte[] data;
 
 
     /**

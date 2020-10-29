@@ -59,7 +59,7 @@ To create a new database we select a file and use CDBMake to create the database
 The database is simply a key value store with bye arrays for keys and values.
 So no matter what you are storing in it you will be creating the keys as arrays and  the values as arrays.
 
-There is a util class included for handeling some of the conversions.
+There is a util class included for handling some of the conversions.
 
 For android you may store Parcel objects here is an example
 

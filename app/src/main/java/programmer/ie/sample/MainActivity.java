@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ListView listview = (ListView) findViewById(R.id.listview);
         final ArrayList<String> list = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter(this,
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
 
@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
 
                 adapter.notifyDataSetChanged();
             }

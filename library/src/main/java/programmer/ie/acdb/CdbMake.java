@@ -401,12 +401,12 @@ public final class CdbMake {
         /**
          * The hash value of this entry.
          */
-        int hash;
+        final int hash;
 
         /**
          * The position in the constant database of this entry.
          */
-        int pos;
+        final int pos;
 
 
         /**
